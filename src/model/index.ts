@@ -1,10 +1,13 @@
 import {
+  combine,
   createEffect,
   createEvent,
   createStore,
-  setStoreName,
+  restore,
+  sample,
 } from 'effector-logger';
-import { generateRandomTree } from '../lib/generateRandomTree';
+import { GraphData } from 'react-force-graph-2d';
+import { GV } from '../lib/GV';
 import { mapAdjacencyMatrixToD3Graph } from '../lib/mapAdjacencyMatrixToD3Graph';
 import { mapCsvToMatrix } from '../lib/mapCsvToMatrix';
 
@@ -12,6 +15,7 @@ interface ITheme {
   primary: string;
   background: string;
   secondary: string;
+  text: string;
 }
 
 interface IThemes {
@@ -26,11 +30,13 @@ export const THEMES: IThemes = {
     primary: 'white',
     background: 'black',
     secondary: 'lightgrey',
+    text: 'darkgrey',
   },
   light: {
     primary: 'black',
     background: 'white',
     secondary: 'darkgrey',
+    text: 'red',
   },
 };
 
@@ -40,6 +46,10 @@ export const loadGraphFromFile = createEvent<React.MouseEvent>(
   'loadGraphFromFile'
 );
 export const loadGraphFromGV = createEvent<React.MouseEvent>('loadGraphFromGV');
+
+export const setName = createEvent<string>('setName');
+export const setSize = createEvent<string>('setSize');
+export const setDividers = createEvent<string>('setDividers');
 
 export const fxLoadGraphFromFile = createEffect({
   name: 'fxLoadGraphFromFile',
@@ -80,10 +90,42 @@ export const $fileContents = createStore<string>(`1 0 0\n0 0 1\n0 0 0`, {
   name: '$fileContents',
 }).on(fxLoadGraphFromFile.doneData, (_, payload) => payload);
 
-export const $graph = $fileContents
-  .map(mapCsvToMatrix)
-  .map(mapAdjacencyMatrixToD3Graph);
+export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
 
-$graph.watch(console.log);
+export const $gvSize = restore(setSize, '7');
 
-setStoreName($graph, '$graph');
+export const $gvDividers = restore(setDividers, '2 3');
+
+export const $graph = createStore<GraphData>(
+  {
+    links: [],
+    nodes: [],
+  },
+  { name: '$graph' }
+);
+
+// Берём в графостор GV по инпутосторам по вызову loadGraphFromGV
+sample({
+  clock: loadGraphFromGV,
+  source: combine($gvName, $gvSize, $gvDividers),
+  fn: ([name, size, dividers]) =>
+    mapAdjacencyMatrixToD3Graph(
+      GV(
+        name.replace(' ', ''),
+        !isNaN(Number(size)) ? Number(size) : 7,
+        dividers
+          .split(' ')
+          .map((divider) => (!isNaN(Number(divider)) ? Number(divider) : 1))
+      ).adjacencyMatrix
+    ),
+  target: $graph,
+});
+
+// Берём в графостор данные из файлостора по вызову loadGraphFromFile
+sample({
+  clock: loadGraphFromFile,
+  source: $fileContents,
+  fn: (fileContents) =>
+    mapAdjacencyMatrixToD3Graph(mapCsvToMatrix(fileContents)),
+  target: $graph,
+});

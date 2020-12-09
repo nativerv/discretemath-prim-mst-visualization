@@ -118,25 +118,26 @@ function encodeAdjacencyMatrix(matrix: number[][]) {
     .flatMap((adjacents, i) => adjacents.map((adjacent) => [i, adjacent]));
 }
 
-(() => {
-  const name = process.argv[2];
-  const size = Number(process.argv[3]);
-  const dividers = JSON.parse(process.argv[4]);
-  const { helperMatrix, adjacencyMatrix } = GV(name, size, dividers);
+// require.main === module &&
+//   (() => {
+//     const name = process.argv[2];
+//     const size = Number(process.argv[3]);
+//     const dividers = JSON.parse(process.argv[4]);
+//     const { helperMatrix, adjacencyMatrix } = GV(name, size, dividers);
 
-  console.log('Цифры из ФИО: ', getUniqueNumbersFromString(name));
+//     console.log('Цифры из ФИО: ', getUniqueNumbersFromString(name));
 
-  console.log();
-  console.log('Вспомогательная матрица: ');
-  prettyPrintMatrix(helperMatrix);
+//     console.log();
+//     console.log('Вспомогательная матрица: ');
+//     prettyPrintMatrix(helperMatrix);
 
-  console.log();
-  console.log('Матрица смежности: ');
-  prettyPrintMatrix(adjacencyMatrix);
+//     console.log();
+//     console.log('Матрица смежности: ');
+//     prettyPrintMatrix(adjacencyMatrix);
 
-  console.log();
-  console.log('Цифры для сайта: ');
-  encodeAdjacencyMatrix(adjacencyMatrix).forEach(([i, adjacent]) =>
-    console.log(i + 1, adjacent + 1)
-  );
-})();
+//     console.log();
+//     console.log('Цифры для сайта: ');
+//     encodeAdjacencyMatrix(adjacencyMatrix).forEach(([i, adjacent]) =>
+//       console.log(i + 1, adjacent + 1)
+//     );
+//   })();
