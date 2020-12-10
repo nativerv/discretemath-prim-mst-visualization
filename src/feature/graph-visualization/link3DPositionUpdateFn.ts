@@ -21,5 +21,5 @@ export function link3DPositionUpdateFn(
   // Position sprite
   Object.assign(sprite.position, middlePos);
 
-  return true;
+  return false;
 }

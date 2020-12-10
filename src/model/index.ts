@@ -40,8 +40,8 @@ export const THEMES: IThemes = {
   light: {
     primary: 'black',
     background: 'white',
-    secondary: 'darkgrey',
-    text: 'red',
+    secondary: 'black',
+    text: 'darkgrey',
     accent: 'red',
   },
 };
@@ -113,16 +113,17 @@ export const $isHighlighted = createStore<boolean>(false).on(
   toggleIsHighlighted,
   (state) => !state
 );
+export const $adjacencyMatrix = createStore<number[][]>([[]]);
+
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
   nodes: [],
-});
+}).reset(loadGraphFromFile, loadGraphFromGV);
 
 export const $fileContents = createStore<string>(textMatrix, {
   name: '$fileContents',
 }).on(fxLoadGraphFromFile.doneData, (_, payload) => payload);
 
-export const $adjacencyMatrix = createStore<number[][]>([[]]);
 
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
 export const $gvSize = restore(setSize, '7');

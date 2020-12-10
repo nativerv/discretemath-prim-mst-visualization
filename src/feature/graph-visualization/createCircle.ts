@@ -1,6 +1,8 @@
 import { ICustomObjectFactoryParams } from './../../types/factories';
 import { ITheme } from '../../model';
 
+const SIZE = 30;
+
 export function makeCreateCircle({
   colors,
   highlightedSubGraph,
@@ -10,7 +12,7 @@ export function makeCreateCircle({
     ctx: CanvasRenderingContext2D,
     globalScale: number
   ) {
-    const fontSize = 12;
+    const fontSize = SIZE / 1.5;
 
     const text = String(id);
 
@@ -21,7 +23,7 @@ export function makeCreateCircle({
     ctx.fillStyle = isInHilightedSubGraph ? colors.accent : colors.background;
     ctx.strokeStyle = colors.primary;
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI * 2, false);
+    ctx.arc(x, y, SIZE, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.stroke();
     ctx.closePath();

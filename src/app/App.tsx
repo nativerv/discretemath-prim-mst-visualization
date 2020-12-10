@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { uniqBy } from 'lodash';
 import './App.css';
 import { mstPrim } from '../feature/prims-algorithm/mst-prim';
 import ForceGraph3D from 'react-force-graph-3d';
@@ -45,6 +46,8 @@ import { makeCreateLink2D } from '../feature/graph-visualization/createLink2D';
 import { link3DPositionUpdateFn } from '../feature/graph-visualization/link3DPositionUpdateFn';
 import { makeCreateCircle } from '../feature/graph-visualization/createCircle';
 import { range } from 'd3';
+import { mstPrimGen } from '../feature/prims-algorithm/mst-prim-generator';
+import { wait } from '../lib/wait';
 
 const DISTANCE = 500;
 
@@ -62,22 +65,16 @@ function App() {
   const graph3DRef = useRef<ForceGraphMethods>();
   const graph2DRef = useRef<ForceGraphMethods>();
 
+  // Установка силы отторжения между вершинами
   useEffect(() => {
-    console.log('D3Force-thingys:');
-    // @ts-ignore
-    console.log(graph3DRef.current?.d3Force('link').distance);
-    console.log(graph3DRef.current?.d3Force('link'));
-
-    // @ts-ignore
-    // graph3DRef.current?.d3Force('link').distance(DISTANCE);
     // @ts-ignore
     graph3DRef.current?.d3Force('charge').strength(-DISTANCE);
 
     // @ts-ignore
-    // graph2DRef.current?.d3Force('link').distance(DISTANCE);
+    graph2DRef.current?.d3Force('link').distance(DISTANCE);
     // @ts-ignore
     graph2DRef.current?.d3Force('charge').strength(-DISTANCE);
-  }, []);
+  });
 
   function makeHandleChange(setter: Event<string>) {
     return function (e: React.ChangeEvent<HTMLInputElement>) {
@@ -109,6 +106,28 @@ function App() {
         ? 6
         : 2,
   };
+
+  async function handleCalculatePrimAnimClick(
+    e: React.MouseEvent<HTMLButtonElement>
+  ) {
+    const mstGen = mstPrimGen(adjacencyMatrix);
+
+    for (const partialMST of mstGen) {
+      const links = partialMST.map(([source, target]) => ({ source, target }));
+
+      // Маппим пары вершин (рёбра) в уникальные вершины задействованные в этих рёбрах
+      const nodes = uniqBy(
+        partialMST.flatMap(([source, target]) => [
+          { id: source },
+          { id: target },
+        ]),
+        'id'
+      );
+
+      setHilightedSubGraph({ nodes, links });
+      await wait(0.5);
+    }
+  }
 
   function handleCalculatePrimClick(e: React.MouseEvent<HTMLButtonElement>) {
     const mst = mstPrim(adjacencyMatrix);
@@ -152,6 +171,7 @@ function App() {
       />
       <button onClick={loadGraphFromGV}>Load From GV</button>
       <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
+      <button onClick={handleCalculatePrimAnimClick}>Animate Prim's MST</button>
 
       {mode === '3D' ? (
         <ForceGraph3D
