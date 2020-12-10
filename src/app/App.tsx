@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './App.css';
+import { mstPrim } from '../feature/prims-algorithm/mst-prim';
 import ForceGraph3D from 'react-force-graph-3d';
+import type { ForceGraphMethods } from 'react-force-graph-3d';
 import ForceGraph2D, {
   NodeObject,
   ForceGraphProps,
 } from 'react-force-graph-2d';
-import { SphereGeometry, Mesh, MeshLambertMaterial, Object3D } from 'three';
+import {
+  SphereGeometry,
+  Mesh,
+  MeshLambertMaterial,
+  Object3D,
+  LineBasicMaterial,
+  BufferGeometry,
+  Vector3,
+  Line,
+} from 'three';
 import { Event } from 'effector-logger';
 import { useStore } from 'effector-react';
 import {
@@ -23,82 +34,92 @@ import {
   setName,
   setDividers,
   fxLoadGraphFromFile,
+  $adjacencyMatrix,
+  setHilightedSubGraph,
+  $hilightedSubGraph,
 } from '../model';
 import SpriteText from 'three-spritetext';
+import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
+import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
+import { makeCreateLink2D } from '../feature/graph-visualization/createLink2D';
+import { link3DPositionUpdateFn } from '../feature/graph-visualization/link3DPositionUpdateFn';
+import { makeCreateCircle } from '../feature/graph-visualization/createCircle';
+import { range } from 'd3';
 
-const CONFIG = {
-  nodeResolution: 20,
-};
+const DISTANCE = 500;
 
 function App() {
   const colors = useStore($colors);
   const mode = useStore($mode);
   const graph = useStore($graph);
+  const adjacencyMatrix = useStore($adjacencyMatrix);
 
   const name = useStore($gvName);
   const size = useStore($gvSize);
   const dividers = useStore($gvDividers);
+  const highlightedSubGraph = useStore($hilightedSubGraph);
 
-  function createCircle(
-    { id, x, y }: { id?: number | string; x: number; y: number },
-    ctx: CanvasRenderingContext2D,
-    globalScale: number
-  ) {
-    const fontSize = 12;
+  const graph3DRef = useRef<ForceGraphMethods>();
+  const graph2DRef = useRef<ForceGraphMethods>();
 
-    const text = String(id);
+  useEffect(() => {
+    console.log('D3Force-thingys:');
+    // @ts-ignore
+    console.log(graph3DRef.current?.d3Force('link').distance);
+    console.log(graph3DRef.current?.d3Force('link'));
 
-    ctx.fillStyle = colors.background;
-    ctx.strokeStyle = colors.primary;
-    ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
+    // @ts-ignore
+    // graph3DRef.current?.d3Force('link').distance(DISTANCE);
+    // @ts-ignore
+    graph3DRef.current?.d3Force('charge').strength(-DISTANCE);
 
-    ctx.textBaseline = 'middle';
-    ctx.font = `${fontSize}px Sans-Serif`;
-    ctx.textAlign = 'center';
-    ctx.fillStyle = colors.primary;
-    ctx.fillText(text, x, y);
-  }
-
-  function createSphere({ id }: NodeObject) {
-    const sphere = new SphereGeometry(
-      10,
-      CONFIG.nodeResolution,
-      CONFIG.nodeResolution
-    );
-
-    const material = new MeshLambertMaterial({
-      color: colors.primary,
-      transparent: true,
-      opacity: 0.75,
-    });
-
-    const textSprite = new SpriteText(String(id), 8, colors.text);
-    const sphereMesh = new Mesh(sphere, material);
-
-    const composedObject = new Object3D();
-    composedObject.add(sphereMesh);
-    composedObject.add(textSprite);
-
-    return composedObject;
-  }
-
-  const params: ForceGraphProps = {
-    graphData: graph,
-    backgroundColor: colors.background,
-    nodeColor: () => colors.primary,
-    linkColor: () => colors.secondary,
-    linkWidth: 2,
-  };
+    // @ts-ignore
+    // graph2DRef.current?.d3Force('link').distance(DISTANCE);
+    // @ts-ignore
+    graph2DRef.current?.d3Force('charge').strength(-DISTANCE);
+  }, []);
 
   function makeHandleChange(setter: Event<string>) {
     return function (e: React.ChangeEvent<HTMLInputElement>) {
       setter(e.currentTarget.value);
     };
   }
+
+  const params: ForceGraphProps = {
+    graphData: graph,
+    backgroundColor: colors.background,
+    nodeColor: () => colors.primary,
+    linkColor: ({ source, target }) =>
+      highlightedSubGraph.links.find((subGraphLink) => {
+        return (
+          // @ts-ignore
+          subGraphLink.source === source.id && subGraphLink.target === target.id
+        );
+      })
+        ? colors.accent
+        : colors.secondary,
+
+    linkWidth: ({ source, target }) =>
+      highlightedSubGraph.links.find((subGraphLink) => {
+        return (
+          // @ts-ignore
+          subGraphLink.source === source.id && subGraphLink.target === target.id
+        );
+      })
+        ? 6
+        : 2,
+  };
+
+  function handleCalculatePrimClick(e: React.MouseEvent<HTMLButtonElement>) {
+    const mst = mstPrim(adjacencyMatrix);
+
+    const links = mst.map(([source, target]) => ({ source, target }));
+    const nodes = adjacencyMatrix.map((row, i) => ({ id: i + 1 }));
+
+    setHilightedSubGraph({ nodes, links });
+  }
+
+  const customRenderObjectParams = { colors, highlightedSubGraph };
 
   return (
     <div className="App">
@@ -130,15 +151,28 @@ function App() {
         onChange={makeHandleChange(setDividers)}
       />
       <button onClick={loadGraphFromGV}>Load From GV</button>
+      <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
 
       {mode === '3D' ? (
-        <ForceGraph3D {...params} nodeThreeObject={createSphere} />
+        <ForceGraph3D
+          {...params}
+          ref={graph3DRef}
+          nodeThreeObject={makeCreateSphere(customRenderObjectParams)}
+          linkThreeObject={makeCreateLink3D(customRenderObjectParams)}
+          linkThreeObjectExtend
+          linkPositionUpdate={link3DPositionUpdateFn}
+        />
       ) : (
         <ForceGraph2D
           {...params}
+          // @ts-ignore
+          ref={graph2DRef}
           nodeColor={colors.primary}
           nodeCanvasObjectMode={() => 'after'}
-          nodeCanvasObject={createCircle as any}
+          nodeCanvasObject={makeCreateCircle(customRenderObjectParams) as any}
+          linkCanvasObjectMode={() => 'after'}
+          linkCanvasObject={makeCreateLink2D(customRenderObjectParams)}
+          nodeRelSize={10}
         />
       )}
     </div>

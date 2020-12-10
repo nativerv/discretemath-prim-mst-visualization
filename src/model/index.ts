@@ -8,22 +8,26 @@ import {
 } from 'effector-logger';
 import { GraphData } from 'react-force-graph-2d';
 import { GV } from '../lib/GV';
-import { mapAdjacencyMatrixToD3Graph } from '../lib/mapAdjacencyMatrixToD3Graph';
+import {
+  ILink,
+  mapAdjacencyMatrixToD3Graph,
+} from '../lib/mapAdjacencyMatrixToD3Graph';
 import { mapCsvToMatrix } from '../lib/mapCsvToMatrix';
 
-interface ITheme {
+export interface ITheme {
   primary: string;
   background: string;
   secondary: string;
   text: string;
+  accent: string;
 }
 
-interface IThemes {
+export interface IThemes {
   dark: ITheme;
   light: ITheme;
 }
 
-type TDisplayMode = '3D' | '2D';
+export type TDisplayMode = '3D' | '2D';
 
 export const THEMES: IThemes = {
   dark: {
@@ -31,12 +35,14 @@ export const THEMES: IThemes = {
     background: 'black',
     secondary: 'lightgrey',
     text: 'darkgrey',
+    accent: 'red',
   },
   light: {
     primary: 'black',
     background: 'white',
     secondary: 'darkgrey',
     text: 'red',
+    accent: 'red',
   },
 };
 
@@ -86,14 +92,40 @@ export const $mode = createStore<TDisplayMode>('3D').on(toggleMode, (mode) =>
 
 export const $colors = $theme.map((theme) => THEMES[theme]);
 
-export const $fileContents = createStore<string>(`1 0 0\n0 0 1\n0 0 0`, {
+const matrix = [
+  [0, 2, 5, 100, 0, 0, 0],
+  [2, 0, 2, 0, 7, 0, 0],
+  [5, 2, 0, 1, 4, 3, 0],
+  [100, 0, 1, 0, 0, 4, 0],
+  [0, 7, 4, 0, 0, 1, 5],
+  [0, 0, 3, 4, 1, 0, 7],
+  [0, 0, 0, 0, 5, 7, 0],
+];
+
+const textMatrix = matrix.map((row) => row.join(' ')).join('\n');
+
+export const setHilightedSubGraph = createEvent<GraphData>(
+  'setHilightedSubGraph'
+);
+export const toggleIsHighlighted = createEvent<void>('toggleIsHighlighted');
+
+export const $isHighlighted = createStore<boolean>(false).on(
+  toggleIsHighlighted,
+  (state) => !state
+);
+export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
+  links: [],
+  nodes: [],
+});
+
+export const $fileContents = createStore<string>(textMatrix, {
   name: '$fileContents',
 }).on(fxLoadGraphFromFile.doneData, (_, payload) => payload);
 
+export const $adjacencyMatrix = createStore<number[][]>([[]]);
+
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
-
 export const $gvSize = restore(setSize, '7');
-
 export const $gvDividers = restore(setDividers, '2 3');
 
 export const $graph = createStore<GraphData>(
@@ -102,6 +134,8 @@ export const $graph = createStore<GraphData>(
     nodes: [],
   },
   { name: '$graph' }
+).on($adjacencyMatrix, (state, payload) =>
+  mapAdjacencyMatrixToD3Graph(payload)
 );
 
 // Берём в графостор GV по инпутосторам по вызову loadGraphFromGV
@@ -109,23 +143,20 @@ sample({
   clock: loadGraphFromGV,
   source: combine($gvName, $gvSize, $gvDividers),
   fn: ([name, size, dividers]) =>
-    mapAdjacencyMatrixToD3Graph(
-      GV(
-        name.replace(' ', ''),
-        !isNaN(Number(size)) ? Number(size) : 7,
-        dividers
-          .split(' ')
-          .map((divider) => (!isNaN(Number(divider)) ? Number(divider) : 1))
-      ).adjacencyMatrix
-    ),
-  target: $graph,
+    GV(
+      name.replace(' ', ''),
+      !isNaN(Number(size)) ? Number(size) : 7,
+      dividers
+        .split(' ')
+        .map((divider) => (!isNaN(Number(divider)) ? Number(divider) : 1))
+    ).adjacencyMatrix,
+  target: $adjacencyMatrix,
 });
 
 // Берём в графостор данные из файлостора по вызову loadGraphFromFile
 sample({
   clock: loadGraphFromFile,
   source: $fileContents,
-  fn: (fileContents) =>
-    mapAdjacencyMatrixToD3Graph(mapCsvToMatrix(fileContents)),
-  target: $graph,
+  fn: (fileContents) => mapCsvToMatrix(fileContents),
+  target: $adjacencyMatrix,
 });
