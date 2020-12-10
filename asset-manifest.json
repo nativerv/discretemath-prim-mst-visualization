@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/static/css/main.07f0572a.chunk.css",
-    "main.js": "/static/js/main.6c4f5c8c.chunk.js",
-    "main.js.map": "/static/js/main.6c4f5c8c.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.0fe4cfd5.js",
-    "runtime-main.js.map": "/static/js/runtime-main.0fe4cfd5.js.map",
-    "static/js/2.85b39c5f.chunk.js": "/static/js/2.85b39c5f.chunk.js",
-    "static/js/2.85b39c5f.chunk.js.map": "/static/js/2.85b39c5f.chunk.js.map",
-    "static/js/3.137f5769.chunk.js": "/static/js/3.137f5769.chunk.js",
-    "static/js/3.137f5769.chunk.js.map": "/static/js/3.137f5769.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/main.07f0572a.chunk.css.map": "/static/css/main.07f0572a.chunk.css.map",
-    "static/js/2.85b39c5f.chunk.js.LICENSE.txt": "/static/js/2.85b39c5f.chunk.js.LICENSE.txt"
+    "main.css": "/discretemath-prim-mst-visualization/static/css/main.97b97886.chunk.css",
+    "main.js": "/discretemath-prim-mst-visualization/static/js/main.34e4ee74.chunk.js",
+    "main.js.map": "/discretemath-prim-mst-visualization/static/js/main.34e4ee74.chunk.js.map",
+    "runtime-main.js": "/discretemath-prim-mst-visualization/static/js/runtime-main.30c86b02.js",
+    "runtime-main.js.map": "/discretemath-prim-mst-visualization/static/js/runtime-main.30c86b02.js.map",
+    "static/js/2.85b39c5f.chunk.js": "/discretemath-prim-mst-visualization/static/js/2.85b39c5f.chunk.js",
+    "static/js/2.85b39c5f.chunk.js.map": "/discretemath-prim-mst-visualization/static/js/2.85b39c5f.chunk.js.map",
+    "static/js/3.137f5769.chunk.js": "/discretemath-prim-mst-visualization/static/js/3.137f5769.chunk.js",
+    "static/js/3.137f5769.chunk.js.map": "/discretemath-prim-mst-visualization/static/js/3.137f5769.chunk.js.map",
+    "index.html": "/discretemath-prim-mst-visualization/index.html",
+    "static/css/main.97b97886.chunk.css.map": "/discretemath-prim-mst-visualization/static/css/main.97b97886.chunk.css.map",
+    "static/js/2.85b39c5f.chunk.js.LICENSE.txt": "/discretemath-prim-mst-visualization/static/js/2.85b39c5f.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.0fe4cfd5.js",
+    "static/js/runtime-main.30c86b02.js",
     "static/js/2.85b39c5f.chunk.js",
-    "static/css/main.07f0572a.chunk.css",
-    "static/js/main.6c4f5c8c.chunk.js"
+    "static/css/main.97b97886.chunk.css",
+    "static/js/main.34e4ee74.chunk.js"
   ]
 }
