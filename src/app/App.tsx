@@ -4,20 +4,8 @@ import './App.css';
 import { mstPrim } from '../feature/prims-algorithm/mst-prim';
 import ForceGraph3D from 'react-force-graph-3d';
 import type { ForceGraphMethods } from 'react-force-graph-3d';
-import ForceGraph2D, {
-  NodeObject,
-  ForceGraphProps,
-} from 'react-force-graph-2d';
-import {
-  SphereGeometry,
-  Mesh,
-  MeshLambertMaterial,
-  Object3D,
-  LineBasicMaterial,
-  BufferGeometry,
-  Vector3,
-  Line,
-} from 'three';
+import ForceGraph2D, { ForceGraphProps } from 'react-force-graph-2d';
+
 import { Event } from 'effector-logger';
 import { useStore } from 'effector-react';
 import {
@@ -39,13 +27,11 @@ import {
   setHilightedSubGraph,
   $hilightedSubGraph,
 } from '../model';
-import SpriteText from 'three-spritetext';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
 import { makeCreateLink2D } from '../feature/graph-visualization/createLink2D';
 import { link3DPositionUpdateFn } from '../feature/graph-visualization/link3DPositionUpdateFn';
 import { makeCreateCircle } from '../feature/graph-visualization/createCircle';
-import { range } from 'd3';
 import { mstPrimGen } from '../feature/prims-algorithm/mst-prim-generator';
 import { wait } from '../lib/wait';
 
@@ -110,6 +96,7 @@ function App() {
   async function handleCalculatePrimAnimClick(
     e: React.MouseEvent<HTMLButtonElement>
   ) {
+    // Генераторная версия алгоритма, возвращающая значения по шагам
     const mstGen = mstPrimGen(adjacencyMatrix);
 
     for (const partialMST of mstGen) {
