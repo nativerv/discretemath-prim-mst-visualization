@@ -19,13 +19,16 @@ import {
   toggleMode,
   setSize,
   loadGraphFromGV,
-  loadGraphFromFile,
+  loadAdjacencyMatrixFromFile,
+  loadWeightMatrixFromFile,
   setName,
   setDividers,
-  fxLoadGraphFromFile,
+  fxLoadAdjacencyMatrixFromFile,
+  fxLoadWeightMatrixFromFile,
   $adjacencyMatrix,
   setHilightedSubGraph,
   $hilightedSubGraph,
+  $weightMatrix,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -37,11 +40,12 @@ import { wait } from '../lib/wait';
 
 const DISTANCE = 500;
 
-function App() {
+export function App() {
   const colors = useStore($colors);
   const mode = useStore($mode);
   const graph = useStore($graph);
   const adjacencyMatrix = useStore($adjacencyMatrix);
+  const weightMatrix = useStore($weightMatrix);
 
   const name = useStore($gvName);
   const size = useStore($gvSize);
@@ -97,7 +101,7 @@ function App() {
     e: React.MouseEvent<HTMLButtonElement>
   ) {
     // Генераторная версия алгоритма, возвращающая значения по шагам
-    const mstGen = mstPrimGen(adjacencyMatrix);
+    const mstGen = mstPrimGen(adjacencyMatrix, weightMatrix);
 
     for (const partialMST of mstGen) {
       const links = partialMST.map(([source, target]) => ({ source, target }));
@@ -125,6 +129,11 @@ function App() {
     setHilightedSubGraph({ nodes, links });
   }
 
+  function handleZoomToFitClick() {
+    graph3DRef.current?.zoomToFit(400);
+    graph2DRef.current?.zoomToFit(400);
+  }
+
   const customRenderObjectParams = { colors, highlightedSubGraph };
 
   return (
@@ -132,8 +141,12 @@ function App() {
       <button onClick={toggleTheme}>Theme</button>
       <button onClick={toggleMode}>Mode</button>
 
-      <input type="file" onChange={fxLoadGraphFromFile} />
-      <button onClick={loadGraphFromFile}>Load From File</button>
+      <input type="file" onChange={fxLoadAdjacencyMatrixFromFile} />
+      <input type="file" onChange={fxLoadWeightMatrixFromFile} />
+
+      <button onClick={loadAdjacencyMatrixFromFile}>Load Adj From File</button>
+      <button onClick={loadWeightMatrixFromFile}>Load Weights From File</button>
+
       <br />
       <label htmlFor="name">Имя: </label>
       <input
@@ -159,6 +172,7 @@ function App() {
       <button onClick={loadGraphFromGV}>Load From GV</button>
       <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
       <button onClick={handleCalculatePrimAnimClick}>Animate Prim's MST</button>
+      <button onClick={handleZoomToFitClick}>Zoom to fit</button>
 
       {mode === '3D' ? (
         <ForceGraph3D
@@ -179,11 +193,9 @@ function App() {
           nodeCanvasObject={makeCreateCircle(customRenderObjectParams) as any}
           linkCanvasObjectMode={() => 'after'}
           linkCanvasObject={makeCreateLink2D(customRenderObjectParams)}
-          nodeRelSize={10}
+          nodeRelSize={30}
         />
       )}
     </div>
   );
 }
-
-export default App;

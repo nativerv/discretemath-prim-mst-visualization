@@ -1,4 +1,4 @@
-import { ICustomObjectFactoryParams } from './../../types/factories';
+import { ICustomObjectFactoryParams } from '../../types/factoryTypes';
 import { LinkObject } from 'react-force-graph-3d';
 
 const SIZE = 30;

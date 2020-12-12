@@ -7,52 +7,26 @@ import {
   sample,
 } from 'effector-logger';
 import { GraphData } from 'react-force-graph-2d';
+import { addWeightsMatrixToD3Graph } from '../lib/addWeightsMatrixToD3Graph';
 import { GV } from '../lib/GV';
 import {
   ILink,
   mapAdjacencyMatrixToD3Graph,
 } from '../lib/mapAdjacencyMatrixToD3Graph';
 import { mapCsvToMatrix } from '../lib/mapCsvToMatrix';
+import { IThemes, TDisplayMode } from '../types/modelTypes';
+import { THEMES } from './defaults';
+import { fileLoadHandler } from './fileLoadHandler';
 
-export interface ITheme {
-  primary: string;
-  background: string;
-  secondary: string;
-  text: string;
-  accent: string;
-}
-
-export interface IThemes {
-  dark: ITheme;
-  light: ITheme;
-}
-
-export type TDisplayMode = '3D' | '2D';
-
-export const THEMES: IThemes = {
-  dark: {
-    primary: 'white',
-    background: 'black',
-    secondary: 'lightgrey',
-    text: 'darkgrey',
-    accent: 'red',
-  },
-  light: {
-    primary: 'black',
-    background: 'white',
-    secondary: 'black',
-    text: 'darkgrey',
-    accent: 'red',
-  },
-};
 
 // Ивенты для переключения темы и режима 2D/3D
 export const toggleTheme = createEvent<React.MouseEvent>('toggleTheme');
 export const toggleMode = createEvent<React.MouseEvent>('toggleMode');
 
 // Ивенты для загрузки графа
-export const loadGraphFromGV = createEvent<React.MouseEvent>('loadGraphFromGV');
-export const loadGraphFromFile = createEvent<React.MouseEvent>('loadGraphFromFile');
+export const loadGraphFromGV = createEvent<React.MouseEvent>();
+export const loadAdjacencyMatrixFromFile = createEvent<React.MouseEvent>();
+export const loadWeightMatrixFromFile = createEvent<React.MouseEvent>();
 
 // Ивенты для GV
 export const setName = createEvent<string>('setName');
@@ -66,30 +40,14 @@ export const setHilightedSubGraph = createEvent<GraphData>(
 export const toggleIsHighlighted = createEvent<void>('toggleIsHighlighted');
 
 // Эффект для загрузки матрицы смежности из файла
-export const fxLoadGraphFromFile = createEffect({
-  name: 'fxLoadGraphFromFile',
-  handler: (changeEvent: React.ChangeEvent<HTMLInputElement>) =>
-    new Promise<string>((resolve, reject) => {
-      changeEvent.preventDefault();
+export const fxLoadAdjacencyMatrixFromFile = createEffect({
+  name: 'fxLoadAdjacencyMatrixFromFile',
+  handler: fileLoadHandler,
+});
 
-      const reader = new FileReader();
-
-      reader.onload = async (fileEvent) => {
-        const text = fileEvent.target?.result;
-        console.log('File loaded', { text });
-        resolve(String(text));
-      };
-
-      const fileBlob = changeEvent.target.files?.[0];
-      console.log({ fileBlob, files: changeEvent.target.files });
-
-      if (fileBlob) {
-        console.log('Begin loading file');
-        reader.readAsText(fileBlob);
-      } else {
-        reject("Error: can't begin reading the file: file is null");
-      }
-    }),
+export const fxLoadWeightMatrixFromFile = createEffect({
+  name: 'fxLoadWeightMatrixFromFile',
+  handler: fileLoadHandler,
 });
 
 // Сторы для темы и режима
@@ -109,10 +67,18 @@ export const $isHighlighted = createStore<boolean>(false).on(
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
   nodes: [],
-}).reset(loadGraphFromFile, loadGraphFromGV);
+}).reset(loadAdjacencyMatrixFromFile, loadGraphFromGV);
 
-export const $fileContents = restore<string>(fxLoadGraphFromFile.doneData, '');
+export const $weightMatrixFileContents = restore<string>(
+  fxLoadWeightMatrixFromFile.doneData,
+  ''
+);
+export const $adjacencyMatrixFileContents = restore<string>(
+  fxLoadAdjacencyMatrixFromFile.doneData,
+  ''
+);
 export const $adjacencyMatrix = createStore<number[][]>([[]]);
+export const $weightMatrix = createStore<number[][]>([[]]);
 
 // GV сторы
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
@@ -126,9 +92,13 @@ export const $graph = createStore<GraphData>(
     nodes: [],
   },
   { name: '$graph' }
-).on($adjacencyMatrix, (state, payload) =>
-  mapAdjacencyMatrixToD3Graph(payload)
-);
+)
+  .on($adjacencyMatrix, (state, payload) =>
+    mapAdjacencyMatrixToD3Graph(payload)
+  )
+  .on($weightMatrix, (state, payload) =>
+    addWeightsMatrixToD3Graph(state, payload)
+  );
 
 // Берём в графостор GV по инпутосторам по вызову loadGraphFromGV
 sample({
@@ -147,8 +117,15 @@ sample({
 
 // Берём в графостор данные из файлостора по вызову loadGraphFromFile
 sample({
-  clock: loadGraphFromFile,
-  source: $fileContents,
-  fn: (fileContents) => mapCsvToMatrix(fileContents),
+  clock: loadAdjacencyMatrixFromFile,
+  source: $adjacencyMatrixFileContents,
+  fn: mapCsvToMatrix,
   target: $adjacencyMatrix,
+});
+
+sample({
+  clock: loadWeightMatrixFromFile,
+  source: $weightMatrixFileContents,
+  fn: mapCsvToMatrix,
+  target: $weightMatrix,
 });

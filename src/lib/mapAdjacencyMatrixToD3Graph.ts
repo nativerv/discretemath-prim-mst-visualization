@@ -14,7 +14,7 @@ export function mapAdjacencyMatrixToD3Graph(matrix: number[][]) {
           {
             source: i + 1,
             target: j + 1,
-            weight: cell,
+            weight: 1,
           },
         ]
       : []

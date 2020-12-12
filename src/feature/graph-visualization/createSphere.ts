@@ -1,7 +1,6 @@
-import { ICustomObjectFactoryParams } from './../../types/factories';
+import { ICustomObjectFactoryParams } from '../../types/factoryTypes';
 import SpriteText from 'three-spritetext';
 import { SphereGeometry, MeshLambertMaterial, Mesh, Object3D } from 'three';
-import { ITheme } from './../../model';
 import { NodeObject } from 'react-force-graph-3d';
 
 const CONFIG = {

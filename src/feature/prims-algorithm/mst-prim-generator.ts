@@ -4,8 +4,11 @@
  */
 const range = (N: number) => [...Array(N).keys()];
 
-export function* mstPrimGen(A: number[][]) {
-  const N = A.length;
+export function* mstPrimGen(
+  adjacencyMatrix: number[][],
+  weightMatrix: number[][]
+) {
+  const N = adjacencyMatrix.length;
   const vertices = range(N);
   const reached = [];
   const unreached = [...vertices];
@@ -15,15 +18,16 @@ export function* mstPrimGen(A: number[][]) {
   unreached.splice(0, 1);
 
   while (unreached.length > 0) {
-    let min = 99999999999999;
+    let min = Number.MAX_SAFE_INTEGER;
     let rIndex = 0;
     let uIndex = 0;
 
     for (var i = 0; i < reached.length; i++) {
       for (var j = 0; j < unreached.length; j++) {
-        const weight = A[reached[i]][unreached[j]];
+        const weight = weightMatrix[reached[i]]?.[unreached[j]] ?? 1;
+        const isAdjacent = adjacencyMatrix[reached[i]][unreached[j]] !== 0;
 
-        if (weight < min && weight !== 0) {
+        if (weight < min && isAdjacent) {
           min = weight;
           rIndex = i;
           uIndex = j;

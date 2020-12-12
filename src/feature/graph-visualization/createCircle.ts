@@ -1,5 +1,4 @@
-import { ICustomObjectFactoryParams } from './../../types/factories';
-import { ITheme } from '../../model';
+import { ICustomObjectFactoryParams } from '../../types/factoryTypes';
 
 const SIZE = 30;
 

@@ -1,4 +1,4 @@
-import { ICustomObjectFactoryParams } from './../../types/factories';
+import { ICustomObjectFactoryParams } from '../../types/factoryTypes';
 import SpriteText from 'three-spritetext';
 import * as d3 from 'd3';
 import {
@@ -10,7 +10,6 @@ import {
   BufferAttribute,
   VertexColors,
 } from 'three';
-import { ITheme } from './../../model/index';
 import { LinkObject } from 'react-force-graph-3d';
 
 export function makeCreateLink3D({
