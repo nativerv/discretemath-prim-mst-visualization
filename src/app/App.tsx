@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { uniqBy } from 'lodash';
 import './App.scss';
+import '../lib/styles/classes.scss';
 import { mstPrim } from '../feature/prims-algorithm/mst-prim';
 import ForceGraph3D from 'react-force-graph-3d';
 import type { ForceGraphMethods } from 'react-force-graph-3d';
@@ -37,6 +38,8 @@ import { link3DPositionUpdateFn } from '../feature/graph-visualization/link3DPos
 import { makeCreateCircle } from '../feature/graph-visualization/createCircle';
 import { mstPrimGen } from '../feature/prims-algorithm/mst-prim-generator';
 import { wait } from '../lib/wait';
+import { Modal } from '../lib/components/modal/Modal';
+import { Overlay } from '../lib/components/overlay/Overlay';
 
 const DISTANCE = 500;
 
@@ -138,41 +141,64 @@ export function App() {
 
   return (
     <div className="App">
-      <button onClick={toggleTheme}>Theme</button>
-      <button onClick={toggleMode}>Mode</button>
+      <Modal>
+        <p>REEE</p>
+      </Modal>
+      <Overlay>
+        <button onClick={toggleTheme}>Theme</button>
+        <button onClick={toggleMode}>Mode</button>
 
-      <input type="file" onChange={fxLoadAdjacencyMatrixFromFile} />
-      <input type="file" onChange={fxLoadWeightMatrixFromFile} />
+        <br />
 
-      <button onClick={loadAdjacencyMatrixFromFile}>Load Adj From File</button>
-      <button onClick={loadWeightMatrixFromFile}>Load Weights From File</button>
+        <label htmlFor="adjacencyMatrixFile">Adjacency matrix: </label>
+        <input type="file" onChange={fxLoadAdjacencyMatrixFromFile} />
+        <br />
+        <label htmlFor="weightMatrixFile">Weight matrix: </label>
+        <input type="file" onChange={fxLoadWeightMatrixFromFile} />
+        <br />
 
-      <br />
-      <label htmlFor="name">Имя: </label>
-      <input
-        type="text"
-        name="name"
-        value={name}
-        onChange={makeHandleChange(setName)}
-      />
-      <label htmlFor="size">Размер: </label>
-      <input
-        type="text"
-        name="size"
-        value={size}
-        onChange={makeHandleChange(setSize)}
-      />
-      <label htmlFor="dividers">Делители: </label>
-      <input
-        type="text"
-        name="dividers"
-        value={dividers}
-        onChange={makeHandleChange(setDividers)}
-      />
-      <button onClick={loadGraphFromGV}>Load From GV</button>
-      <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
-      <button onClick={handleCalculatePrimAnimClick}>Animate Prim's MST</button>
-      <button onClick={handleZoomToFitClick}>Zoom to fit</button>
+        <button onClick={loadAdjacencyMatrixFromFile}>
+          Load Adj From File
+        </button>
+        <button onClick={loadWeightMatrixFromFile}>
+          Load Weights From File
+        </button>
+
+        <br />
+
+        <label htmlFor="name">Имя: </label>
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={makeHandleChange(setName)}
+        />
+        <br />
+        <label htmlFor="size">Размер: </label>
+        <input
+          type="text"
+          name="size"
+          value={size}
+          onChange={makeHandleChange(setSize)}
+        />
+        <br />
+        <label htmlFor="dividers">Делители: </label>
+        <input
+          type="text"
+          name="dividers"
+          value={dividers}
+          onChange={makeHandleChange(setDividers)}
+        />
+        <br />
+        <button onClick={loadGraphFromGV}>Load From GV</button>
+        <br />
+        <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
+        <button onClick={handleCalculatePrimAnimClick}>
+          Animate Prim's MST
+        </button>
+        <br />
+        <button onClick={handleZoomToFitClick}>Zoom to fit</button>
+      </Overlay>
 
       {mode === '3D' ? (
         <ForceGraph3D

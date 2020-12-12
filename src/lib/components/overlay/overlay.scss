@@ -1,0 +1,37 @@
+@import "../../styles/colors.scss";
+
+.overlay {
+  $marginHeight: 1vh;
+  $marginWidth: 1vw;
+  $closeMargin: 1.5%;
+
+  position: absolute;
+  top: $marginHeight;
+  right: $marginWidth;
+  min-width: 15%;
+  padding: 15px;
+  z-index: 999999;
+
+  background-color: $overlayColor;
+  border-radius: 1px;
+  color: white;
+  text-align: left;
+  
+  .overlay__title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+
+    .overlay__toggle {
+      font-size: 22px;
+      
+      cursor: pointer;
+      user-select: none;
+    }
+  }
+
+  .overlay__content-container {
+    margin-top: 10px;
+  }
+}

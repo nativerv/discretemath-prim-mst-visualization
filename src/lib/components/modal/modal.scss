@@ -1,0 +1,36 @@
+@import "../../styles/colors.scss";
+
+.modal {
+  $marginHeight: 1vh;
+  $marginWidth: 1vw;
+
+  position: absolute;
+  top: $marginHeight;
+  left: $marginWidth;
+  bottom: $marginHeight;
+  right: $marginWidth;
+  z-index: 999999;
+
+  background-color: $overlayColor;
+  border-radius: 1px;
+  color: white;
+  text-align: left;
+
+  & &__close {
+    $closeMargin: 1.5%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: fixed;
+    top: $closeMargin;
+    right: $closeMargin;
+    width: 30px;
+    height: 30px;
+    font-size: 22px;
+    
+    cursor: pointer;
+    user-select: none;
+  }
+}
