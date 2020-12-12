@@ -46,17 +46,26 @@ export const THEMES: IThemes = {
   },
 };
 
+// Ивенты для переключения темы и режима 2D/3D
 export const toggleTheme = createEvent<React.MouseEvent>('toggleTheme');
 export const toggleMode = createEvent<React.MouseEvent>('toggleMode');
-export const loadGraphFromFile = createEvent<React.MouseEvent>(
-  'loadGraphFromFile'
-);
-export const loadGraphFromGV = createEvent<React.MouseEvent>('loadGraphFromGV');
 
+// Ивенты для загрузки графа
+export const loadGraphFromGV = createEvent<React.MouseEvent>('loadGraphFromGV');
+export const loadGraphFromFile = createEvent<React.MouseEvent>('loadGraphFromFile');
+
+// Ивенты для GV
 export const setName = createEvent<string>('setName');
 export const setSize = createEvent<string>('setSize');
 export const setDividers = createEvent<string>('setDividers');
 
+// Ивенты относящиеся к подсветке остовного дерева
+export const setHilightedSubGraph = createEvent<GraphData>(
+  'setHilightedSubGraph'
+);
+export const toggleIsHighlighted = createEvent<void>('toggleIsHighlighted');
+
+// Эффект для загрузки матрицы смежности из файла
 export const fxLoadGraphFromFile = createEffect({
   name: 'fxLoadGraphFromFile',
   handler: (changeEvent: React.ChangeEvent<HTMLInputElement>) =>
@@ -83,52 +92,34 @@ export const fxLoadGraphFromFile = createEffect({
     }),
 });
 
+// Сторы для темы и режима
 export const $theme = createStore<keyof IThemes>('dark', {
   name: '$theme',
 }).on(toggleTheme, (theme) => (theme === 'dark' ? 'light' : 'dark'));
 export const $mode = createStore<TDisplayMode>('3D').on(toggleMode, (mode) =>
   mode === '3D' ? '2D' : '3D'
 );
-
 export const $colors = $theme.map((theme) => THEMES[theme]);
 
-const matrix = [
-  [0, 2, 5, 100, 0, 0, 0],
-  [2, 0, 2, 0, 7, 0, 0],
-  [5, 2, 0, 1, 4, 3, 0],
-  [100, 0, 1, 0, 0, 4, 0],
-  [0, 7, 4, 0, 0, 1, 5],
-  [0, 0, 3, 4, 1, 0, 7],
-  [0, 0, 0, 0, 5, 7, 0],
-];
-
-const textMatrix = matrix.map((row) => row.join(' ')).join('\n');
-
-export const setHilightedSubGraph = createEvent<GraphData>(
-  'setHilightedSubGraph'
-);
-export const toggleIsHighlighted = createEvent<void>('toggleIsHighlighted');
-
+// Сторы для подсветки остовного дерева
 export const $isHighlighted = createStore<boolean>(false).on(
   toggleIsHighlighted,
   (state) => !state
 );
-export const $adjacencyMatrix = createStore<number[][]>([[]]);
-
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
   nodes: [],
 }).reset(loadGraphFromFile, loadGraphFromGV);
 
-export const $fileContents = createStore<string>(textMatrix, {
-  name: '$fileContents',
-}).on(fxLoadGraphFromFile.doneData, (_, payload) => payload);
+export const $fileContents = restore<string>(fxLoadGraphFromFile.doneData, '');
+export const $adjacencyMatrix = createStore<number[][]>([[]]);
 
-
+// GV сторы
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
 export const $gvSize = restore(setSize, '7');
 export const $gvDividers = restore(setDividers, '2 3');
 
+// Основной стор с D3 графом
 export const $graph = createStore<GraphData>(
   {
     links: [],
