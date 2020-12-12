@@ -30,6 +30,12 @@ import {
   setHilightedSubGraph,
   $hilightedSubGraph,
   $weightMatrix,
+  toggleAdjacencyMatrixModal,
+  toggleWeightMatrixModal,
+  toggleActions,
+  $isActionsMinimised,
+  $isAdjacencyMatrixModalOpened,
+  $isWeightMatrixModalOpened,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -53,7 +59,12 @@ export function App() {
   const name = useStore($gvName);
   const size = useStore($gvSize);
   const dividers = useStore($gvDividers);
+
   const highlightedSubGraph = useStore($hilightedSubGraph);
+
+  const isActionsMinimised = useStore($isActionsMinimised);
+  const isAdjacencyMatrixModalOpened = useStore($isAdjacencyMatrixModalOpened);
+  const isWeightMatrixModalOpened = useStore($isWeightMatrixModalOpened);
 
   const graph3DRef = useRef<ForceGraphMethods>();
   const graph2DRef = useRef<ForceGraphMethods>();
@@ -141,13 +152,24 @@ export function App() {
 
   return (
     <div className="App">
-      <Modal>
-        <p>REEE</p>
+      <Modal
+        visible={isAdjacencyMatrixModalOpened}
+        onClose={toggleAdjacencyMatrixModal}
+      >
+        <p>Adj modal</p>
       </Modal>
-      <Overlay>
+      <Modal
+        visible={isWeightMatrixModalOpened}
+        onClose={toggleWeightMatrixModal}
+      >
+        <p>Weight modal</p>
+      </Modal>
+
+      <Overlay minimized={isActionsMinimised} onToggle={toggleActions}>
         <button onClick={toggleTheme}>Theme</button>
         <button onClick={toggleMode}>Mode</button>
 
+        <br />
         <br />
 
         <label htmlFor="adjacencyMatrixFile">Adjacency matrix: </label>
@@ -164,6 +186,7 @@ export function App() {
           Load Weights From File
         </button>
 
+        <br />
         <br />
 
         <label htmlFor="name">Имя: </label>
@@ -192,12 +215,20 @@ export function App() {
         <br />
         <button onClick={loadGraphFromGV}>Load From GV</button>
         <br />
+        <br />
         <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
         <button onClick={handleCalculatePrimAnimClick}>
           Animate Prim's MST
         </button>
         <br />
         <button onClick={handleZoomToFitClick}>Zoom to fit</button>
+        <br />
+        <br />
+        <button onClick={toggleAdjacencyMatrixModal}>
+          Edit adjacency matrix
+        </button>
+        <br />
+        <button onClick={toggleWeightMatrixModal}>Edit weight matrix</button>
       </Overlay>
 
       {mode === '3D' ? (

@@ -16,12 +16,17 @@ import {
 import { mapCsvToMatrix } from '../lib/mapCsvToMatrix';
 import { IThemes, TDisplayMode } from '../types/modelTypes';
 import { THEMES } from './defaults';
-import { fileLoadHandler } from './fileLoadHandler';
-
+import { fileLoadHandler } from './effect-handlers/fileLoadHandler';
+import { toggle } from './reducers/toggle';
 
 // Ивенты для переключения темы и режима 2D/3D
 export const toggleTheme = createEvent<React.MouseEvent>('toggleTheme');
 export const toggleMode = createEvent<React.MouseEvent>('toggleMode');
+
+// Ивенты для различных меню
+export const toggleAdjacencyMatrixModal = createEvent<React.MouseEvent>();
+export const toggleWeightMatrixModal = createEvent<React.MouseEvent>();
+export const toggleActions = createEvent<React.MouseEvent>();
 
 // Ивенты для загрузки графа
 export const loadGraphFromGV = createEvent<React.MouseEvent>();
@@ -59,10 +64,22 @@ export const $mode = createStore<TDisplayMode>('3D').on(toggleMode, (mode) =>
 );
 export const $colors = $theme.map((theme) => THEMES[theme]);
 
+export const $isAdjacencyMatrixModalOpened = createStore(false).on(
+  toggleAdjacencyMatrixModal,
+  toggle
+);
+
+export const $isWeightMatrixModalOpened = createStore(false).on(
+  toggleWeightMatrixModal,
+  toggle
+);
+
+export const $isActionsMinimised = createStore(false).on(toggleActions, toggle);
+
 // Сторы для подсветки остовного дерева
 export const $isHighlighted = createStore<boolean>(false).on(
   toggleIsHighlighted,
-  (state) => !state
+  toggle
 );
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
