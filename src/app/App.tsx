@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { uniqBy } from 'lodash';
-import './App.css';
+import './App.scss';
 import { mstPrim } from '../feature/prims-algorithm/mst-prim';
 import ForceGraph3D from 'react-force-graph-3d';
 import type { ForceGraphMethods } from 'react-force-graph-3d';
