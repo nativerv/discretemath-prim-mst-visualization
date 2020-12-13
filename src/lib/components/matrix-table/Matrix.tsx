@@ -14,26 +14,28 @@ export function Matrix({
   onAddRow = noop,
   onAddCol = noop,
 }: IMatrixProps) {
-  function makeHandleKeyPress(ij: [number, number]) {
-    return function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-      if (e.key === 'Enter') {
-        onEditCell(ij, e.currentTarget.value);
-      }
+  function makeHandleChange(ij: [number, number]) {
+    return function handleKeyPress(e: React.ChangeEvent<HTMLInputElement>) {
+      onEditCell(ij, e.currentTarget.value);
     };
   }
 
   return (
     <div className="matrix">
       {matrix.map((row, i) => (
-        <div className="matrix__row" key={i}>
+        <div className="matrix__row">
           {row.map((cell, j) => (
-            <input
-              className="matrix__cell"
-              key={`${i},${j}`}
-              type="text"
-              defaultValue={cell}
-              onKeyPress={makeHandleKeyPress([i, j])}
-            />
+            <div className="matrix__cell-container">
+              <input
+                className="matrix__cell"
+                type="text"
+                value={cell}
+                onChange={makeHandleChange([i, j])}
+              />
+              <div className="matrix__index">
+                {i + 1},{j + 1}
+              </div>
+            </div>
           ))}
         </div>
       ))}

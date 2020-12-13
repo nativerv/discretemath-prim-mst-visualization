@@ -10,20 +10,38 @@
 
   color: white;
   border-radius: 4px;
-  
+
   .matrix__row {
     display: flex;
     flex-direction: row;
     gap: 4px;
-    
-    .matrix__cell {
-      width: 30px;
-      height: 25px;
-      border: 1px solid rgb(90, 90, 90);
 
-      background-color: #181a1b;
-      color: #e8e6e3;
-      text-align: center;
+    .matrix__cell-container {
+      $cellFontColor: #e8e6e3;
+      $cellBackgroundColor: #181a1b;
+      $cellBorderColor: rgb(90, 90, 90);
+
+      position: relative;
+
+      .matrix__cell {
+        width: 30px;
+        height: 25px;
+        border: 1px solid $cellBorderColor;
+
+        background-color: $cellBackgroundColor;
+        color: $cellFontColor;
+        text-align: center;
+      }
+
+      .matrix__index {
+        position: absolute;
+        right: -2px;
+        bottom: -3px;
+        font-size: 10px;
+
+        background-color: $cellBackgroundColor;
+        color: darken($cellFontColor, 15%);
+      }
     }
   }
 
