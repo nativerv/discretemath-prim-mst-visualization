@@ -37,6 +37,8 @@ import {
   $isAdjacencyMatrixModalOpened,
   $isWeightMatrixModalOpened,
   $theme,
+  setAdjacencyMatrix,
+  setWeightMatrix,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -47,6 +49,9 @@ import { mstPrimGen } from '../feature/prims-algorithm/mst-prim-generator';
 import { wait } from '../lib/wait';
 import { Modal } from '../lib/components/modal/Modal';
 import { Overlay } from '../lib/components/overlay/Overlay';
+import { Matrix } from '../lib/components/matrix-table/Matrix';
+import { validateNumber } from '../feature/graph-visualization/validateNumber';
+import { editInMatrix } from '../feature/graph-visualization/editInMatrix';
 
 const DISTANCE = 500;
 
@@ -153,19 +158,59 @@ export function App() {
 
   const customRenderObjectParams = { colors, highlightedSubGraph };
 
+  function makeHandleEdiMatrixCell(
+    matrix: number[][],
+    setter: Event<number[][]>
+  ) {
+    return function handleEditAdjacencyMatrixCell(
+      [i, j]: [number, number],
+      newValue: string
+    ) {
+      const validatedInput = validateNumber(newValue, 1);
+      const newMatrix = editInMatrix(matrix, [i, j], validatedInput);
+
+      setter(newMatrix);
+    };
+  }
+
+  function handleEditWeightMatrixCell(
+    [i, j]: [number, number],
+    newValue: string
+  ) {
+    const validatedInput = validateNumber(newValue, 1);
+    const newAdjacencyMatrix = editInMatrix(
+      adjacencyMatrix,
+      [i, j],
+      validatedInput
+    );
+
+    setWeightMatrix(newAdjacencyMatrix);
+  }
+
   return (
     <div className="App">
       <Modal
         visible={isAdjacencyMatrixModalOpened}
         onClose={toggleAdjacencyMatrixModal}
       >
-        <p>Adj modal</p>
+        <p>Матрица смежности: </p>
+        <Matrix
+          matrix={adjacencyMatrix}
+          onEditCell={makeHandleEdiMatrixCell(
+            adjacencyMatrix,
+            setAdjacencyMatrix
+          )}
+        ></Matrix>
       </Modal>
       <Modal
         visible={isWeightMatrixModalOpened}
         onClose={toggleWeightMatrixModal}
       >
-        <p>Weight modal</p>
+        <p>Матрица весов: </p>
+        <Matrix
+          matrix={weightMatrix}
+          onEditCell={makeHandleEdiMatrixCell(weightMatrix, setWeightMatrix)}
+        ></Matrix>
       </Modal>
 
       <Overlay minimized={isActionsMinimised} onToggle={toggleActions}>

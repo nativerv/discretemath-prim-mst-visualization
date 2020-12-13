@@ -20,8 +20,8 @@ import { fileLoadHandler } from './effect-handlers/fileLoadHandler';
 import { toggle } from './reducers/toggle';
 
 // Ивенты для переключения темы и режима 2D/3D
-export const toggleTheme = createEvent<React.MouseEvent>('toggleTheme');
-export const toggleMode = createEvent<React.MouseEvent>('toggleMode');
+export const toggleTheme = createEvent<React.MouseEvent>();
+export const toggleMode = createEvent<React.MouseEvent>();
 
 // Ивенты для различных меню
 export const toggleAdjacencyMatrixModal = createEvent<React.MouseEvent>();
@@ -34,31 +34,31 @@ export const loadAdjacencyMatrixFromFile = createEvent<React.MouseEvent>();
 export const loadWeightMatrixFromFile = createEvent<React.MouseEvent>();
 
 // Ивенты для GV
-export const setName = createEvent<string>('setName');
-export const setSize = createEvent<string>('setSize');
-export const setDividers = createEvent<string>('setDividers');
+export const setName = createEvent<string>();
+export const setSize = createEvent<string>();
+export const setDividers = createEvent<string>();
+
+export const setAdjacencyMatrix = createEvent<number[][]>();
+export const setWeightMatrix = createEvent<number[][]>();
 
 // Ивенты относящиеся к подсветке остовного дерева
-export const setHilightedSubGraph = createEvent<GraphData>(
-  'setHilightedSubGraph'
-);
-export const toggleIsHighlighted = createEvent<void>('toggleIsHighlighted');
+export const setHilightedSubGraph = createEvent<GraphData>();
+export const toggleIsHighlighted = createEvent<void>();
 
 // Эффект для загрузки матрицы смежности из файла
 export const fxLoadAdjacencyMatrixFromFile = createEffect({
-  name: 'fxLoadAdjacencyMatrixFromFile',
   handler: fileLoadHandler,
 });
 
 export const fxLoadWeightMatrixFromFile = createEffect({
-  name: 'fxLoadWeightMatrixFromFile',
   handler: fileLoadHandler,
 });
 
 // Сторы для темы и режима
-export const $theme = createStore<keyof IThemes>('dark', {
-  name: '$theme',
-}).on(toggleTheme, (theme) => (theme === 'dark' ? 'light' : 'dark'));
+export const $theme = createStore<keyof IThemes>('dark').on(
+  toggleTheme,
+  (theme) => (theme === 'dark' ? 'light' : 'dark')
+);
 export const $mode = createStore<TDisplayMode>('3D').on(toggleMode, (mode) =>
   mode === '3D' ? '2D' : '3D'
 );
@@ -94,8 +94,8 @@ export const $adjacencyMatrixFileContents = restore<string>(
   fxLoadAdjacencyMatrixFromFile.doneData,
   ''
 );
-export const $adjacencyMatrix = createStore<number[][]>([[]]);
-export const $weightMatrix = createStore<number[][]>([[]]);
+export const $adjacencyMatrix = restore<number[][]>(setAdjacencyMatrix, [[]]);
+export const $weightMatrix = restore<number[][]>(setWeightMatrix, [[]]);
 
 // GV сторы
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
@@ -103,13 +103,10 @@ export const $gvSize = restore(setSize, '7');
 export const $gvDividers = restore(setDividers, '2 3');
 
 // Основной стор с D3 графом
-export const $graph = createStore<GraphData>(
-  {
-    links: [],
-    nodes: [],
-  },
-  { name: '$graph' }
-)
+export const $graph = createStore<GraphData>({
+  links: [],
+  nodes: [],
+})
   .on($adjacencyMatrix, (state, payload) =>
     mapAdjacencyMatrixToD3Graph(payload)
   )
