@@ -6,6 +6,8 @@ interface IMatrixProps {
   onEditCell?: (ij: [number, number], newValue: string) => void;
   onAddRow?: () => void;
   onAddCol?: () => void;
+  onRemoveRow?: () => void;
+  onRemoveCol?: () => void;
 }
 
 export function Matrix({
@@ -13,6 +15,8 @@ export function Matrix({
   onEditCell = noop,
   onAddRow = noop,
   onAddCol = noop,
+  onRemoveRow = noop,
+  onRemoveCol = noop,
 }: IMatrixProps) {
   function makeHandleChange(ij: [number, number]) {
     return function handleKeyPress(e: React.ChangeEvent<HTMLInputElement>) {
@@ -41,14 +45,16 @@ export function Matrix({
       ))}
       <div className="matrix__controls">
         <div className="matrix__controls-row">
-          <button className="matrix__add-row">+</button>
-          <button className="matrix__rem-row">-</button>
+          <button className="matrix__add-row" onClick={onAddRow}>+</button>
+          <button className="matrix__rem-row" onClick={onRemoveRow}>-</button>
         </div>
         <div className="matrix__controls-col">
-          <button className="matrix__add-col">+</button>
-          <button className="matrix__rem-col">-</button>
+          <button className="matrix__add-col" onClick={onAddCol}>+</button>
+          <button className="matrix__rem-col" onClick={onRemoveCol}>-</button>
         </div>
       </div>
+
     </div>
   );
+
 }

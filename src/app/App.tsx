@@ -97,6 +97,7 @@ export function App() {
   const params: ForceGraphProps = {
     graphData: graph,
     backgroundColor: colors.background,
+    nodeLabel: (node) => String(node.id),
     nodeColor: () => colors.primary,
     linkColor: ({ source, target }) =>
       highlightedSubGraph.links.find((subGraphLink) => {
@@ -158,19 +159,18 @@ export function App() {
 
   const customRenderObjectParams = { colors, highlightedSubGraph };
 
-  function makeHandleEdiMatrixCell(
-    matrix: number[][],
-    setter: Event<number[][]>
+  function handleEditAdjacencyMatrixCell(
+    [i, j]: [number, number],
+    newValue: string
   ) {
-    return function handleEditAdjacencyMatrixCell(
-      [i, j]: [number, number],
-      newValue: string
-    ) {
-      const validatedInput = validateNumber(newValue, 1);
-      const newMatrix = editInMatrix(matrix, [i, j], validatedInput);
+    const validatedInput = validateNumber(
+      newValue,
+      0,
+      (value) => value === 0 || value === 1
+    );
+    const newMatrix = editInMatrix(adjacencyMatrix, [i, j], validatedInput);
 
-      setter(newMatrix);
-    };
+    setAdjacencyMatrix(newMatrix);
   }
 
   function handleEditWeightMatrixCell(
@@ -178,13 +178,9 @@ export function App() {
     newValue: string
   ) {
     const validatedInput = validateNumber(newValue, 1);
-    const newAdjacencyMatrix = editInMatrix(
-      adjacencyMatrix,
-      [i, j],
-      validatedInput
-    );
+    const newMatrix = editInMatrix(weightMatrix, [i, j], validatedInput);
 
-    setWeightMatrix(newAdjacencyMatrix);
+    setWeightMatrix(newMatrix);
   }
 
   return (
@@ -196,10 +192,7 @@ export function App() {
         <p>Матрица смежности: </p>
         <Matrix
           matrix={adjacencyMatrix}
-          onEditCell={makeHandleEdiMatrixCell(
-            adjacencyMatrix,
-            setAdjacencyMatrix
-          )}
+          onEditCell={handleEditAdjacencyMatrixCell}
         ></Matrix>
       </Modal>
       <Modal
@@ -209,7 +202,7 @@ export function App() {
         <p>Матрица весов: </p>
         <Matrix
           matrix={weightMatrix}
-          onEditCell={makeHandleEdiMatrixCell(weightMatrix, setWeightMatrix)}
+          onEditCell={handleEditWeightMatrixCell}
         ></Matrix>
       </Modal>
 
