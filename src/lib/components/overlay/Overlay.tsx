@@ -18,11 +18,8 @@ export function Overlay({
     <div className="overlay">
       <div className="overlay__title-container">
         {title}
-        <div
-          className={`overlay__toggle ${minimized ? '' : 'reversed'}`}
-          onClick={onToggle}
-        >
-          ^
+        <div className={`overlay__toggle`} onClick={onToggle}>
+          {minimized ? '▼' : '▲'}
         </div>
       </div>
       {!minimized && (

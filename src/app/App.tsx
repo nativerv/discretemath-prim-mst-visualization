@@ -36,6 +36,7 @@ import {
   $isActionsMinimised,
   $isAdjacencyMatrixModalOpened,
   $isWeightMatrixModalOpened,
+  $theme,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -52,6 +53,8 @@ const DISTANCE = 500;
 export function App() {
   const colors = useStore($colors);
   const mode = useStore($mode);
+  const theme = useStore($theme);
+
   const graph = useStore($graph);
   const adjacencyMatrix = useStore($adjacencyMatrix);
   const weightMatrix = useStore($weightMatrix);
@@ -166,8 +169,9 @@ export function App() {
       </Modal>
 
       <Overlay minimized={isActionsMinimised} onToggle={toggleActions}>
-        <button onClick={toggleTheme}>Theme</button>
-        <button onClick={toggleMode}>Mode</button>
+        <button onClick={toggleTheme}>Тема: {theme}</button>
+        <br />
+        <button onClick={toggleMode}>Режим: {mode}</button>
 
         <br />
         <br />
@@ -180,10 +184,10 @@ export function App() {
         <br />
 
         <button onClick={loadAdjacencyMatrixFromFile}>
-          Load Adj From File
+          Загрузить матрицу смежности из файла
         </button>
         <button onClick={loadWeightMatrixFromFile}>
-          Load Weights From File
+          Загрузить матрицу весов из файла
         </button>
 
         <br />
@@ -213,22 +217,30 @@ export function App() {
           onChange={makeHandleChange(setDividers)}
         />
         <br />
-        <button onClick={loadGraphFromGV}>Load From GV</button>
+        <button onClick={loadGraphFromGV}>Сгенерировать из GV</button>
         <br />
         <br />
-        <button onClick={handleCalculatePrimClick}>Calculate Prim's MST</button>
-        <button onClick={handleCalculatePrimAnimClick}>
-          Animate Prim's MST
+        <button onClick={handleCalculatePrimClick}>
+          Рассчитать алгоритм Прима
         </button>
         <br />
-        <button onClick={handleZoomToFitClick}>Zoom to fit</button>
+        <button onClick={handleCalculatePrimAnimClick}>
+          Анимировать алгоритм Прима
+        </button>
+        <br />
+        <br />
+        <button onClick={handleZoomToFitClick}>
+          Масштабировать чтобы помещалось
+        </button>
         <br />
         <br />
         <button onClick={toggleAdjacencyMatrixModal}>
-          Edit adjacency matrix
+          Изменить матрицу смежности
         </button>
         <br />
-        <button onClick={toggleWeightMatrixModal}>Edit weight matrix</button>
+        <button onClick={toggleWeightMatrixModal}>
+          Изменить матрицу весов
+        </button>
       </Overlay>
 
       {mode === '3D' ? (

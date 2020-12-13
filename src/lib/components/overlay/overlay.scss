@@ -25,9 +25,11 @@
 
     .overlay__toggle {
       font-size: 22px;
+      margin-top: -4px;
       
       cursor: pointer;
       user-select: none;
+      text-align: center;
     }
   }
 
