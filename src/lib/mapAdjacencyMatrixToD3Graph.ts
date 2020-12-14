@@ -6,15 +6,18 @@ export interface ILink {
   weight: number;
 }
 
-export function mapAdjacencyMatrixToD3Graph(matrix: number[][]) {
-  const nodes = matrix.map((row, i) => ({ id: i + 1 }));
-  const links = mapMatrix(matrix, (cell, [i, j]) =>
+export function mapAdjacencyAndWeightMatrixToD3Graph(
+  adjacencyMatrix: number[][],
+  weightMatrix: number[][]
+) {
+  const nodes = adjacencyMatrix[0].map((row, i) => ({ id: i + 1 }));
+  const links = mapMatrix(adjacencyMatrix, (cell, [i, j]) =>
     cell
       ? [
           {
             source: i + 1,
             target: j + 1,
-            weight: 1,
+            weight: weightMatrix[i]?.[j] ?? 1,
           },
         ]
       : []

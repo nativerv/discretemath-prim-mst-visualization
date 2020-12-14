@@ -157,11 +157,17 @@ export function App() {
   }
 
   function handleCalculatePrimClick(e: React.MouseEvent<HTMLButtonElement>) {
-    const mst = mstPrim(adjacencyMatrix);
+    const { solution, listing } = mstPrim(adjacencyMatrix, weightMatrix);
 
-    const links = mst.map(([source, target]) => ({ source, target }));
-    const nodes = adjacencyMatrix.map((row, i) => ({ id: i + 1 }));
+    const links = solution.map(([source, target]) => ({ source, target }));
 
+    // Маппим пары вершин (рёбра) в уникальные вершины задействованные в этих рёбрах
+    const nodes = uniqBy(
+      solution.flatMap(([source, target]) => [{ id: source }, { id: target }]),
+      'id'
+    );
+
+    setListingString(listing.join('\n'));
     setHilightedSubGraph({ nodes, links });
   }
 

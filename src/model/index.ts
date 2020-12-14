@@ -13,7 +13,7 @@ import { fitMatrixToAnother } from '../lib/fitMatrixToAnother';
 import { GV } from '../lib/GV';
 import {
   ILink,
-  mapAdjacencyMatrixToD3Graph,
+  mapAdjacencyAndWeightMatrixToD3Graph,
 } from '../lib/mapAdjacencyMatrixToD3Graph';
 import { mapCsvToMatrix } from '../lib/mapCsvToMatrix';
 import { IThemes, TDisplayMode } from '../types/modelTypes';
@@ -126,7 +126,9 @@ export const $adjacencyMatrix = restore<number[][]>(setAdjacencyMatrix, [[]])
 export const $weightMatrix = restore<number[][]>(setWeightMatrix, [
   [],
 ]).on($adjacencyMatrix, (state, payload) =>
-  payload.length > state.length
+  payload.length === state.length
+    ? state
+    : payload.length > state.length
     ? fitMatrixToAnother(state, payload)
     : state.slice(0, payload.length).map((row) => row.slice(0, payload.length))
 );
@@ -137,16 +139,12 @@ export const $gvSize = restore(setSize, '7');
 export const $gvDividers = restore(setDividers, '2 3');
 
 // Основной стор с D3 графом
-export const $graph = createStore<GraphData>({
-  links: [],
-  nodes: [],
-})
-  .on($adjacencyMatrix, (state, payload) =>
-    mapAdjacencyMatrixToD3Graph(payload)
-  )
-  .on($weightMatrix, (state, payload) =>
-    addWeightsMatrixToD3Graph(state, payload)
-  );
+export const $graph = combine(
+  $adjacencyMatrix,
+  $weightMatrix
+).map(([adjacencyMatrix, weightMatrix]) =>
+  mapAdjacencyAndWeightMatrixToD3Graph(adjacencyMatrix, weightMatrix)
+);
 
 // Берём в графостор GV по инпутосторам по вызову loadGraphFromGV
 sample({
