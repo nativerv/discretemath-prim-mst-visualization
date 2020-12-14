@@ -28,6 +28,7 @@ export const toggleMode = createEvent<React.MouseEvent>();
 // Ивенты для различных меню
 export const toggleAdjacencyMatrixModal = createEvent<React.MouseEvent>();
 export const toggleWeightMatrixModal = createEvent<React.MouseEvent>();
+export const toggleListingModal = createEvent<React.MouseEvent>();
 export const toggleActions = createEvent<React.MouseEvent>();
 
 // Ивенты для загрузки графа
@@ -45,6 +46,9 @@ export const setDividers = createEvent<string>();
 
 export const setAdjacencyMatrix = createEvent<number[][]>();
 export const setWeightMatrix = createEvent<number[][]>();
+
+// Ивенты для листинга
+export const setListingString = createEvent<string>();
 
 // Ивенты относящиеся к подсветке остовного дерева
 export const setHilightedSubGraph = createEvent<GraphData>();
@@ -79,6 +83,11 @@ export const $isWeightMatrixModalOpened = createStore(false).on(
   toggle
 );
 
+export const $isListingModalOpened = createStore(false).on(
+  toggleListingModal,
+  toggle
+);
+
 export const $isActionsMinimised = createStore(false).on(toggleActions, toggle);
 
 // Сторы для подсветки остовного дерева
@@ -86,6 +95,9 @@ export const $isHighlighted = createStore<boolean>(false).on(
   toggleIsHighlighted,
   toggle
 );
+
+export const $listingString = restore<string>(setListingString, '');
+
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
   nodes: [],

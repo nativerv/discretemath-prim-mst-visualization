@@ -41,6 +41,10 @@ import {
   setWeightMatrix,
   addNodeToGraph,
   removeLastNodeFromGraph,
+  setListingString,
+  $isListingModalOpened,
+  $listingString,
+  toggleListingModal,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -65,6 +69,9 @@ export function App() {
   const graph = useStore($graph);
   const adjacencyMatrix = useStore($adjacencyMatrix);
   const weightMatrix = useStore($weightMatrix);
+
+  const isListingModalOpened = useStore($isListingModalOpened);
+  const listingString = useStore($listingString);
 
   const name = useStore($gvName);
   const size = useStore($gvSize);
@@ -129,11 +136,14 @@ export function App() {
     const mstGen = mstPrimGen(adjacencyMatrix, weightMatrix);
 
     for (const partialMST of mstGen) {
-      const links = partialMST.map(([source, target]) => ({ source, target }));
+      const links = partialMST.solution.map(([source, target]) => ({
+        source,
+        target,
+      }));
 
       // Маппим пары вершин (рёбра) в уникальные вершины задействованные в этих рёбрах
       const nodes = uniqBy(
-        partialMST.flatMap(([source, target]) => [
+        partialMST.solution.flatMap(([source, target]) => [
           { id: source },
           { id: target },
         ]),
@@ -141,6 +151,7 @@ export function App() {
       );
 
       setHilightedSubGraph({ nodes, links });
+      setListingString(partialMST.listing.join('\n'));
       await wait(0.5);
     }
   }
@@ -210,6 +221,10 @@ export function App() {
           matrix={weightMatrix}
           onEditCell={handleEditWeightMatrixCell}
         ></Matrix>
+      </Modal>
+      <Modal visible={isListingModalOpened} onClose={toggleListingModal}>
+        <p>Листинг алгоритма: </p>
+        <pre>{listingString}</pre>
       </Modal>
 
       <Overlay minimized={isActionsMinimised} onToggle={toggleActions}>
@@ -284,6 +299,12 @@ export function App() {
         <br />
         <button onClick={toggleWeightMatrixModal}>
           Изменить матрицу весов
+        </button>
+
+        <br />
+
+        <button onClick={toggleListingModal}>
+          Листинг алгоритма...
         </button>
       </Overlay>
 
