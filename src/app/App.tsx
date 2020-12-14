@@ -166,7 +166,7 @@ export function App() {
     const validatedInput = validateNumber(
       newValue,
       0,
-      (value) => value === 0 || value === 1
+      (value) => (value === 0 || value === 1) && i !== j
     );
     const newMatrix = editInMatrix(adjacencyMatrix, [i, j], validatedInput);
 
@@ -177,7 +177,7 @@ export function App() {
     [i, j]: [number, number],
     newValue: string
   ) {
-    const validatedInput = validateNumber(newValue, 1);
+    const validatedInput = validateNumber(newValue, 0, () => i !== j);
     const newMatrix = editInMatrix(weightMatrix, [i, j], validatedInput);
 
     setWeightMatrix(newMatrix);

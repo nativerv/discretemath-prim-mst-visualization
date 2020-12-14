@@ -8,6 +8,7 @@ import {
 } from 'effector-logger';
 import { GraphData } from 'react-force-graph-2d';
 import { addWeightsMatrixToD3Graph } from '../lib/addWeightsMatrixToD3Graph';
+import { fitMatrixToAnother } from '../lib/fitMatrixToAnother';
 import { GV } from '../lib/GV';
 import {
   ILink,
@@ -94,8 +95,15 @@ export const $adjacencyMatrixFileContents = restore<string>(
   fxLoadAdjacencyMatrixFromFile.doneData,
   ''
 );
+
 export const $adjacencyMatrix = restore<number[][]>(setAdjacencyMatrix, [[]]);
-export const $weightMatrix = restore<number[][]>(setWeightMatrix, [[]]);
+export const $weightMatrix = restore<number[][]>(setWeightMatrix, [
+  [],
+]).on($adjacencyMatrix, (state, payload) =>
+  payload.length > state.length
+    ? fitMatrixToAnother(state, payload)
+    : state.slice(0, payload.length).map((row) => row.slice(0, payload.length))
+);
 
 // GV сторы
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
