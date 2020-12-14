@@ -26,24 +26,26 @@ export function Matrix({
 
   return (
     <div className="matrix">
-      {matrix.map((row, i) => (
-        <div className="matrix__row">
-          {row.map((cell, j) => (
-            <div className="matrix__cell-container">
-              <input
-                className="matrix__cell"
-                type="text"
-                value={cell}
-                onChange={makeHandleChange([i, j])}
-              />
-              <div className="matrix__index">
-                {i + 1},{j + 1}
-              </div>
+      {matrix[0].length === 0
+        ? '∅'
+        : matrix.map((row, i) => (
+            <div className="matrix__row">
+              {row.map((cell, j) => (
+                <div className="matrix__cell-container">
+                  <input
+                    className="matrix__cell"
+                    type="text"
+                    value={cell}
+                    onChange={makeHandleChange([i, j])}
+                  />
+                  <div className="matrix__index">
+                    {i + 1},{j + 1}
+                  </div>
+                </div>
+              ))}
             </div>
           ))}
-        </div>
-      ))}
-      <div className="matrix__controls">
+      {/* <div className="matrix__controls">
         <div className="matrix__controls-row">
           <button className="matrix__add-row" onClick={onAddRow}>+</button>
           <button className="matrix__rem-row" onClick={onRemoveRow}>-</button>
@@ -52,9 +54,7 @@ export function Matrix({
           <button className="matrix__add-col" onClick={onAddCol}>+</button>
           <button className="matrix__rem-col" onClick={onRemoveCol}>-</button>
         </div>
-      </div>
-
+      </div> */}
     </div>
   );
-
 }
