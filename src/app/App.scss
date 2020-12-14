@@ -8,6 +8,10 @@
   pointer-events: none;
 }
 
+.matrix-edit-buttons {
+  margin-bottom: 10px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

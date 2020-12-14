@@ -39,6 +39,8 @@ import {
   $theme,
   setAdjacencyMatrix,
   setWeightMatrix,
+  addNodeToGraph,
+  removeLastNodeFromGraph,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -190,6 +192,10 @@ export function App() {
         onClose={toggleAdjacencyMatrixModal}
       >
         <p>Матрица смежности: </p>
+        <div className="matrix-edit-buttons">
+          <button onClick={addNodeToGraph}>Добавить вершину</button>
+          <button onClick={removeLastNodeFromGraph}>Удалить вершину</button>
+        </div>
         <Matrix
           matrix={adjacencyMatrix}
           onEditCell={handleEditAdjacencyMatrixCell}
@@ -214,10 +220,10 @@ export function App() {
         <br />
         <br />
 
-        <label htmlFor="adjacencyMatrixFile">Adjacency matrix: </label>
+        <label htmlFor="adjacencyMatrixFile">Матрица смежности: </label>
         <input type="file" onChange={fxLoadAdjacencyMatrixFromFile} />
         <br />
-        <label htmlFor="weightMatrixFile">Weight matrix: </label>
+        <label htmlFor="weightMatrixFile">Матрица весов: </label>
         <input type="file" onChange={fxLoadWeightMatrixFromFile} />
         <br />
 

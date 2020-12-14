@@ -8,6 +8,7 @@ import {
 } from 'effector-logger';
 import { GraphData } from 'react-force-graph-2d';
 import { addWeightsMatrixToD3Graph } from '../lib/addWeightsMatrixToD3Graph';
+import { createBlankMatrix } from '../lib/createBlankMatrix';
 import { fitMatrixToAnother } from '../lib/fitMatrixToAnother';
 import { GV } from '../lib/GV';
 import {
@@ -33,6 +34,9 @@ export const toggleActions = createEvent<React.MouseEvent>();
 export const loadGraphFromGV = createEvent<React.MouseEvent>();
 export const loadAdjacencyMatrixFromFile = createEvent<React.MouseEvent>();
 export const loadWeightMatrixFromFile = createEvent<React.MouseEvent>();
+
+export const addNodeToGraph = createEvent<React.MouseEvent>();
+export const removeLastNodeFromGraph = createEvent<React.MouseEvent>();
 
 // Ивенты для GV
 export const setName = createEvent<string>();
@@ -96,7 +100,17 @@ export const $adjacencyMatrixFileContents = restore<string>(
   ''
 );
 
-export const $adjacencyMatrix = restore<number[][]>(setAdjacencyMatrix, [[]]);
+export const $adjacencyMatrix = restore<number[][]>(setAdjacencyMatrix, [[]])
+  .on(addNodeToGraph, (state) =>
+    state[0].length === 0
+      ? [[0]]
+      : fitMatrixToAnother(state, createBlankMatrix(state.length + 1, 0), 0)
+  )
+  .on(removeLastNodeFromGraph, (state) =>
+    state.length === 1
+      ? [[]]
+      : fitMatrixToAnother(state, createBlankMatrix(state.length - 1, 0), 0)
+  );
 export const $weightMatrix = restore<number[][]>(setWeightMatrix, [
   [],
 ]).on($adjacencyMatrix, (state, payload) =>
