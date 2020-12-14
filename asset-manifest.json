@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/discretemath-prim-mst-visualization/static/css/main.8318263c.chunk.css",
-    "main.js": "/discretemath-prim-mst-visualization/static/js/main.17141658.chunk.js",
-    "main.js.map": "/discretemath-prim-mst-visualization/static/js/main.17141658.chunk.js.map",
+    "main.css": "/discretemath-prim-mst-visualization/static/css/main.c6ab71e5.chunk.css",
+    "main.js": "/discretemath-prim-mst-visualization/static/js/main.54a3948e.chunk.js",
+    "main.js.map": "/discretemath-prim-mst-visualization/static/js/main.54a3948e.chunk.js.map",
     "runtime-main.js": "/discretemath-prim-mst-visualization/static/js/runtime-main.25502f51.js",
     "runtime-main.js.map": "/discretemath-prim-mst-visualization/static/js/runtime-main.25502f51.js.map",
-    "static/js/2.27e92201.chunk.js": "/discretemath-prim-mst-visualization/static/js/2.27e92201.chunk.js",
-    "static/js/2.27e92201.chunk.js.map": "/discretemath-prim-mst-visualization/static/js/2.27e92201.chunk.js.map",
+    "static/js/2.85cee1e1.chunk.js": "/discretemath-prim-mst-visualization/static/js/2.85cee1e1.chunk.js",
+    "static/js/2.85cee1e1.chunk.js.map": "/discretemath-prim-mst-visualization/static/js/2.85cee1e1.chunk.js.map",
     "static/js/3.70a3f5d4.chunk.js": "/discretemath-prim-mst-visualization/static/js/3.70a3f5d4.chunk.js",
     "static/js/3.70a3f5d4.chunk.js.map": "/discretemath-prim-mst-visualization/static/js/3.70a3f5d4.chunk.js.map",
     "index.html": "/discretemath-prim-mst-visualization/index.html",
-    "static/css/main.8318263c.chunk.css.map": "/discretemath-prim-mst-visualization/static/css/main.8318263c.chunk.css.map",
-    "static/js/2.27e92201.chunk.js.LICENSE.txt": "/discretemath-prim-mst-visualization/static/js/2.27e92201.chunk.js.LICENSE.txt"
+    "static/css/main.c6ab71e5.chunk.css.map": "/discretemath-prim-mst-visualization/static/css/main.c6ab71e5.chunk.css.map",
+    "static/js/2.85cee1e1.chunk.js.LICENSE.txt": "/discretemath-prim-mst-visualization/static/js/2.85cee1e1.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.25502f51.js",
-    "static/js/2.27e92201.chunk.js",
-    "static/css/main.8318263c.chunk.css",
-    "static/js/main.17141658.chunk.js"
+    "static/js/2.85cee1e1.chunk.js",
+    "static/css/main.c6ab71e5.chunk.css",
+    "static/js/main.54a3948e.chunk.js"
   ]
 }
