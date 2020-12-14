@@ -196,6 +196,30 @@ export function App() {
     setWeightMatrix(newMatrix);
   }
 
+  function handleDownloadListingClick() {
+    const data = new Blob([listingString], {
+      type: 'text/plain;charset=utf-8',
+    });
+    let textFile = null;
+
+    // If we are replacing a previously generated file we need to
+    // manually revoke the object URL to avoid memory leaks.
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
+
+    textFile = window.URL.createObjectURL(data);
+
+    const element = document.createElement('a');
+    element.style.height = '0px';
+    element.href = textFile;
+    element.download = 'Листинг алгоритма.txt';
+
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
   return (
     <div className="App">
       <Modal
@@ -225,6 +249,9 @@ export function App() {
       <Modal visible={isListingModalOpened} onClose={toggleListingModal}>
         <p>Листинг алгоритма: </p>
         <pre>{listingString}</pre>
+        <button onClick={handleDownloadListingClick}>
+          Сохранить листинг на диск
+        </button>
       </Modal>
 
       <Overlay minimized={isActionsMinimised} onToggle={toggleActions}>
@@ -303,9 +330,7 @@ export function App() {
 
         <br />
 
-        <button onClick={toggleListingModal}>
-          Листинг алгоритма...
-        </button>
+        <button onClick={toggleListingModal}>Листинг алгоритма...</button>
       </Overlay>
 
       {mode === '3D' ? (
