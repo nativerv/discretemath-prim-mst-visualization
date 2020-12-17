@@ -1,14 +1,23 @@
 import { uniqBy } from 'lodash';
 
-export function mapMstPrimToD3Graph(mst: [number, number][]) {
-  const links = mst.map(([source, target]) => ({
-    source,
-    target,
-  }));
+export function mapMstPrimToD3Graph(mstComponents: number[][][]) {
+  const links = mstComponents.flatMap((component, i) =>
+    component.map(([source, target]) => ({
+      source: source,
+      target: target,
+      component: i,
+    }))
+  );
 
-  // Маппим пары вершин (рёбра) в уникальные вершины задействованные в этих рёбрах
+  // Маппим массив компонент графа с парами вершин (рёбер)
+  // в уникальные вершины задействованные в этих рёбрах плюс номер компоненты
   const nodes = uniqBy(
-    mst.flatMap(([source, target]) => [{ id: source }, { id: target }]),
+    mstComponents.flatMap((component, i) =>
+      component.flatMap(([source, target]) => [
+        { id: source, component: i },
+        { id: target, component: i },
+      ])
+    ),
     'id'
   );
 

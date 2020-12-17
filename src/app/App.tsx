@@ -59,6 +59,7 @@ import { Matrix } from '../lib/components/matrix-table/Matrix';
 import { validateNumber } from '../feature/graph-visualization/validateNumber';
 import { editInMatrix } from '../feature/graph-visualization/editInMatrix';
 import { mapMstPrimToD3Graph } from '../feature/prims-algorithm/mapMstPrimToD3Graph';
+import { validateMst } from '../feature/prims-algorithm/validate-mst';
 
 const DISTANCE = 500;
 
@@ -107,7 +108,22 @@ export function App() {
   const params: ForceGraphProps = {
     graphData: graph,
     backgroundColor: colors.background,
-    nodeLabel: (node) => String(node.id),
+    nodeLabel: (node: any) => {
+      // @ts-ignore
+      const matchingNode: any = highlightedSubGraph.nodes.find(
+        (subGraphNode) =>
+          // @ts-ignore
+          subGraphNode.id === node.id
+      );
+
+      return matchingNode
+        ? // @ts-ignore
+          `Вершина: ${matchingNode.id + 1}, Компонента: ${
+            // @ts-ignore
+            matchingNode.component + 1
+          }`
+        : node.id;
+    },
     nodeColor: () => colors.primary,
     linkColor: ({ source, target }) =>
       highlightedSubGraph.links.find((subGraphLink) => {
@@ -137,7 +153,11 @@ export function App() {
     const mstGen = mstPrimGen(adjacencyMatrix, weightMatrix);
 
     for (const partialMST of mstGen) {
-      const subGraph = mapMstPrimToD3Graph(partialMST.solution);
+      const [splittedToComponents, componentsCount] = validateMst(
+        partialMST.solution,
+        adjacencyMatrix
+      );
+      const subGraph = mapMstPrimToD3Graph(splittedToComponents);
 
       setHilightedSubGraph(subGraph);
       setListingString(partialMST.listing.join('\n'));
@@ -148,7 +168,12 @@ export function App() {
   function handleCalculatePrimClick(e: React.MouseEvent<HTMLButtonElement>) {
     const { solution, listing } = mstPrim(adjacencyMatrix, weightMatrix);
 
-    const subGraph = mapMstPrimToD3Graph(solution);
+    const [splittedToComponents, componentsCount] = validateMst(
+      solution,
+      adjacencyMatrix
+    );
+
+    const subGraph = mapMstPrimToD3Graph(splittedToComponents);
 
     setHilightedSubGraph(subGraph);
     setListingString(listing.join('\n'));

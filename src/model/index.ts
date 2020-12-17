@@ -98,11 +98,6 @@ export const $isHighlighted = createStore<boolean>(false).on(
 
 export const $listingString = restore<string>(setListingString, '');
 
-export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
-  links: [],
-  nodes: [],
-}).reset(loadAdjacencyMatrixFromFile, loadGraphFromGV);
-
 export const $weightMatrixFileContents = restore<string>(
   fxLoadWeightMatrixFromFile.doneData,
   ''
@@ -132,6 +127,11 @@ export const $weightMatrix = restore<number[][]>(setWeightMatrix, [
     ? fitMatrixToAnother(state, payload)
     : state.slice(0, payload.length).map((row) => row.slice(0, payload.length))
 );
+
+export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
+  links: [],
+  nodes: [],
+}).reset($adjacencyMatrix, $weightMatrix);
 
 // GV сторы
 export const $gvName = restore(setName, 'Зайцев Евгений Александрович');

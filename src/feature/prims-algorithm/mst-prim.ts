@@ -91,7 +91,7 @@ export function mstPrim(adjacencyMatrix: number[][], weightMatrix: number[][]) {
       listing.push(`-------- Конец цикла i: ${i + 1}`);
     }
 
-    solution.push([reached[rIndex] + 1, unreached[uIndex] + 1]);
+    solution.push([reached[rIndex], unreached[uIndex]]);
 
     listing.push(``);
     listing.push(

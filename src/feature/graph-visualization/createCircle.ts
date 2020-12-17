@@ -13,7 +13,7 @@ export function makeCreateCircle({
   ) {
     const fontSize = SIZE / 1.5;
 
-    const text = String(id);
+    const text = String(Number(id) + 1);
 
     const isInHilightedSubGraph = highlightedSubGraph.nodes.find(
       (node) => id === node.id

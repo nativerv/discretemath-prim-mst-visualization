@@ -28,7 +28,7 @@ export function makeCreateSphere({
       opacity: 0.75,
     });
 
-    const textSprite = new SpriteText(String(id), 8, colors.text);
+    const textSprite = new SpriteText(String(Number(id) + 1), 8, colors.text);
     const sphereMesh = new Mesh(sphere, material);
 
     const composedObject = new Object3D();
