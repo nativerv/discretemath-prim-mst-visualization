@@ -18,7 +18,7 @@ export function validateMst(
     .map((componentArray) => chunk(componentArray, 2))
     .filter((component) => component.length !== 0);
 
-  const componentsCount = mstWithSeparatedComponents.flat(2).length;
+  const componentsCount = mstWithSeparatedComponents.length;
 
   return [mstWithSeparatedComponents, componentsCount];
 }

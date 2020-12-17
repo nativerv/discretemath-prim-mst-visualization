@@ -45,6 +45,8 @@ import {
   $isListingModalOpened,
   $listingString,
   toggleListingModal,
+  setComponentsCount,
+  $componentsCount,
 } from '../model';
 import { makeCreateSphere } from '../feature/graph-visualization/createSphere';
 import { makeCreateLink3D } from '../feature/graph-visualization/createLink3D';
@@ -80,6 +82,7 @@ export function App() {
   const dividers = useStore($gvDividers);
 
   const highlightedSubGraph = useStore($hilightedSubGraph);
+  const componentsCount = useStore($componentsCount);
 
   const isActionsMinimised = useStore($isActionsMinimised);
   const isAdjacencyMatrixModalOpened = useStore($isAdjacencyMatrixModalOpened);
@@ -160,9 +163,12 @@ export function App() {
       const subGraph = mapMstPrimToD3Graph(splittedToComponents);
 
       setHilightedSubGraph(subGraph);
+      setComponentsCount(componentsCount);
       setListingString(partialMST.listing.join('\n'));
       await wait(0.5);
     }
+
+    console.log(`Компонент графа: ${componentsCount}`);
   }
 
   function handleCalculatePrimClick(e: React.MouseEvent<HTMLButtonElement>) {

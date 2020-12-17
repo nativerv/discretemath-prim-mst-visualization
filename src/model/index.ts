@@ -53,6 +53,7 @@ export const setListingString = createEvent<string>();
 // Ивенты относящиеся к подсветке остовного дерева
 export const setHilightedSubGraph = createEvent<GraphData>();
 export const toggleIsHighlighted = createEvent<void>();
+export const setComponentsCount = createEvent<number>();
 
 // Эффект для загрузки матрицы смежности из файла
 export const fxLoadAdjacencyMatrixFromFile = createEffect({
@@ -128,6 +129,7 @@ export const $weightMatrix = restore<number[][]>(setWeightMatrix, [
     : state.slice(0, payload.length).map((row) => row.slice(0, payload.length))
 );
 
+export const $componentsCount = restore<number>(setComponentsCount, 0);
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
   nodes: [],
