@@ -58,6 +58,7 @@ import { Overlay } from '../lib/components/overlay/Overlay';
 import { Matrix } from '../lib/components/matrix-table/Matrix';
 import { validateNumber } from '../feature/graph-visualization/validateNumber';
 import { editInMatrix } from '../feature/graph-visualization/editInMatrix';
+import { mapMstPrimToD3Graph } from '../feature/prims-algorithm/mapMstPrimToD3Graph';
 
 const DISTANCE = 500;
 
@@ -136,21 +137,9 @@ export function App() {
     const mstGen = mstPrimGen(adjacencyMatrix, weightMatrix);
 
     for (const partialMST of mstGen) {
-      const links = partialMST.solution.map(([source, target]) => ({
-        source,
-        target,
-      }));
+      const subGraph = mapMstPrimToD3Graph(partialMST.solution);
 
-      // Маппим пары вершин (рёбра) в уникальные вершины задействованные в этих рёбрах
-      const nodes = uniqBy(
-        partialMST.solution.flatMap(([source, target]) => [
-          { id: source },
-          { id: target },
-        ]),
-        'id'
-      );
-
-      setHilightedSubGraph({ nodes, links });
+      setHilightedSubGraph(subGraph);
       setListingString(partialMST.listing.join('\n'));
       await wait(0.5);
     }
@@ -159,16 +148,10 @@ export function App() {
   function handleCalculatePrimClick(e: React.MouseEvent<HTMLButtonElement>) {
     const { solution, listing } = mstPrim(adjacencyMatrix, weightMatrix);
 
-    const links = solution.map(([source, target]) => ({ source, target }));
+    const subGraph = mapMstPrimToD3Graph(solution);
 
-    // Маппим пары вершин (рёбра) в уникальные вершины задействованные в этих рёбрах
-    const nodes = uniqBy(
-      solution.flatMap(([source, target]) => [{ id: source }, { id: target }]),
-      'id'
-    );
-
+    setHilightedSubGraph(subGraph);
     setListingString(listing.join('\n'));
-    setHilightedSubGraph({ nodes, links });
   }
 
   function handleZoomToFitClick() {
