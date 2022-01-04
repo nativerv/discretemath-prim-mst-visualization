@@ -1,4 +1,4 @@
-import {
+i/media/media_container_z/Edu/3sem/КДМ/Ind/webmport {
   combine,
   createEffect,
   createEvent,
@@ -54,6 +54,7 @@ export const setListingString = createEvent<string>();
 export const setHilightedSubGraph = createEvent<GraphData>();
 export const toggleIsHighlighted = createEvent<void>();
 export const setComponentsCount = createEvent<number>();
+export const setIsolatedNodes = createEvent<number[]>();
 
 // Эффект для загрузки матрицы смежности из файла
 export const fxLoadAdjacencyMatrixFromFile = createEffect({
@@ -130,13 +131,14 @@ export const $weightMatrix = restore<number[][]>(setWeightMatrix, [
 );
 
 export const $componentsCount = restore<number>(setComponentsCount, 0);
+export const $isolatedNodes = restore<number[]>(setIsolatedNodes, []);
 export const $hilightedSubGraph = restore<GraphData>(setHilightedSubGraph, {
   links: [],
   nodes: [],
 }).reset($adjacencyMatrix, $weightMatrix);
 
 // GV сторы
-export const $gvName = restore(setName, 'Зайцев Евгений Александрович');
+export const $gvName = restore(setName, 'Иванов Иван Иванович');
 export const $gvSize = restore(setSize, '7');
 export const $gvDividers = restore(setDividers, '2 3');
 
